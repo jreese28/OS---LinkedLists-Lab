@@ -1,35 +1,41 @@
+//list.h
+
 // list/list.h
 // 
 // Interface definition for linked list.
 //
-// <Author>
+// J'nya Reese
+//jnya.reese@bison.howard.edu
 
 #include <stdbool.h>
 
-/* Defines the type of the elements in the linked list. You may change this if
- * you want! */
+/* Defines the type of the elements in the linked list.
+ *You may change this if you want! */
 typedef int elem;
 
 /* Defines the node structure. Each node contains its element, and points to the
  * next node in the list. The last element in the list should have NULL as its
  * next pointer. */
-struct node {
-	elem value;
-	struct node *next;
+struct node{
+  elem value;
+  struct node *next;
 };
+
 typedef struct node node_t;
 
 /* Defines the list structure, which simply points to the first node in the
  * list. */
-struct list {
-	node_t *head;
+struct list{
+  node_t *head;
 };
+
 typedef struct list list_t;
 
 /* Functions for allocating and freeing lists. By using only these functions,
  * the user should be able to allocate and free all the memory required for
  * this linked list library. */
 list_t *list_alloc();
+
 void list_free(list_t *l);
 
 /* Prints the list in some format. */

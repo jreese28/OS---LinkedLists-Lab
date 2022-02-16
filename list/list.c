@@ -7,115 +7,181 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <string.h>
-
 #include "list.h"
 
-list_t *list_alloc() {
-    node_ * head == NULL;
-    head = (node_t *) malloc(sizeof(node_t));
-
-    head -> value = 0;
-    head -> next = 0;
-    list_t * new_list = NULL;
-    new_list = (list_t *) malloc(sizeof(list_t));
-    new_list -> head = head;
-    return new_list;
-    }
-void list_free(list_t *l) {}
-
-void list_print(list_t *l) {
-    node_t * current = l -> head;
-    while(current != NULL){
-        printf("%d\n", current -> value);
-        current = current -> next;
-    }
-}
-int list_length(list_t *l) {
-    int count = 0;
-    node_t * current = l -> head;
-    while(current != NULL){
-        count++;
-        current = current -> next;
-    }
-    printf("List length: %d\n", count);
-    return count;
+list_t *list_alloc(){
+  list_t *l = malloc(sizeof(list_t));
+  return l;
 }
 
-void list_add_to_back(list_t *l, elem value) {
-    node_t * current = l -> head;
-    while(current -> next != NULL){
-        current = current -> next;
-    }
-    current -> next = (node_t *) malloc(sizeof(node_t));
-    current -> next -> value = value;
-    current -> next -> next = NULL;
+node_t *node_alloc(elem val){
+  node_t *new_node = (node_t*) malloc(sizeof(node_t));
+  new_node->value = val;
+  return new_node;
 }
 
-void list_add_to_front(list_t *l, elem value) {
-    node_t * new_node;
-    new_node = (node_t *) malloc(sizeof(node_t));
-
-    new_node -> value =  value;
-    new_node -> next = l -> head;
-    l -> head = new_node;
+void list_free(list_t *l){
+  while(l->head != NULL){
+    node_t *temp = l->head;
+    l->head = l->head->next;
+    free(temp);
+  };
 }
 
-void list_add_at_index(list_t *l, elem value, int index) {}
-
-elem list_remove_from_back(list_t *l) {
-    int returnVal = 0;
-
-    if(l -> head -> next == NULL){
-        returnVal = l -> head -> value;
-        free(l -> head);
-        printf("Removed value: %d\n", returnVal);
-        return returnVal;
-    }
-    returnVal = current -> next -> value;
-    free(current -> next);
-    current -> next = NULL;
-    printf("Removed value: %d\n", returnVal);
-    return returnVal;
+void list_print(list_t *l){
+  node_t *current = l->head;
+  while(current != NULL){
+    printf("%d->", current->value);
+    current = current->next;
+  };
 }
 
-elem list_remove_from_front(list_t *l) {
-    int returnVal = -1;
-    node_t * next_node = NULL;
-    if(l -> head == NULL){
-        return -1;
-    }
-    next_node = (l -> head) -> next
-    returnVal = (l -> head) -> value;
-    free(l -> head);
-    l -> head = next_node;
-    printf("Removed value: %d\n", returnVal);
-    returnVal
+int list_length(list_t *l){
+  node_t *current = l->head;
+  int count = 0;
+  while(l->head != NULL){
+    count += 1;
+    l->head = l->head->next;
+  }
+  l->head = current;
+  return count;
 }
 
-elem list_remove_at_index(list_t *l, int index) {
-    int i = 0;
-    int returnVal = -1;
-    list_t * current = l -> head ;
-    list_t * temp_node = NULL;
+void list_add_to_back(list_t *l, elem value){
+  node_t *current = l->head;
+  while(l->head->next != NULL){
+    l->head = l->head->next;
+  };
+  node_t *new_node = malloc(sizeof(node_t));
+  new_node->value = value;
+  l->head->next = new_node;
 
-    if(index == 0){
-        return pop(head);
-    }
-    for(i = 0; i < index - 1; i++){
-        if(current -> next == NULL){
-            return -1;
-        }
-        current = current -> next
-    }
-    temp_node = current -> next;
-    returnVal = temp_node -> value;
-    current -> next = temp_node -> next;
-    free(temp_node);
-    return returnVal;
+  l->head = current;
+  return;
 }
 
-/*bool list_is_in(list_t *l, elem value) { return false; }
-elem list_get_elem_at(list_t *l, int index) { return -1; }
-int list_get_index_of(list_t *l, elem value) { return -1; } */
+void list_add_to_front(list_t *l, elem value){
+  node_t *new_node = malloc(sizeof(node_t));
+  new_node->value = value;
+  new_node->next = l->head;
+  l->head = new_node;
+}
 
+void list_add_at_index(list_t *l, elem value,int index){
+  node_t *current = l->head;
+  
+  if(index == 0){
+    list_add_to_front(l, value);
+    return;
+  }
+
+  if(index == list_length(l) - 1){
+    list_add_to_back(l, value);
+    return;
+  }
+
+  if(index >= list_length(l)){
+    printf("Index too large");
+    return;
+  }
+
+  while(index != 1){
+    index -= 1;
+    l->head = l->head->next;
+  }
+
+  node_t *new_node = malloc(sizeof(node_t));
+  new_node->value = value;
+  new_node->next = l->head->next;
+  l->head->next = new_node;
+  l->head = current;  
+}
+
+elem list_remove_from_back(list_t *l){
+  node_t *current = l->head;
+
+  if(list_length(l) == 1){
+    list_remove_from_front(l);
+    return 0;
+  }
+
+  while(l->head->next->next != NULL){
+    l->head = l->head->next;;
+  }
+  free(l->head->next);
+  l->head->next = NULL;
+  l->head = current;
+  return -1;
+}
+
+elem list_remove_from_front(list_t *l){
+  node_t *temp = l->head;
+  l->head = l->head->next;
+  free(temp);
+  return l->head->value;
+}
+
+elem list_remove_at_index(list_t *l, int index){
+  node_t *current = l->head;
+
+  while(index != 1){
+    index -= 1;
+    l->head = l->head->next;
+  }
+
+  node_t *temp = l->head->next;
+  l->head->next = l->head->next->next;
+  l->head = current;
+  free(temp);
+  return -1;
+}
+
+bool list_is_in(list_t *l, elem value) { 
+  node_t *current = l->head;
+  while(l->head != NULL){
+    if(l->head->value != value){
+      l->head = l->head->next;
+    } else {
+      l->head = current;
+      return true;
+    }
+  }
+  l->head = current;
+  return false; 
+}
+
+elem list_get_elem_at(list_t *l, int index){
+  node_t *current = l->head;
+
+  while(l->head != NULL){
+    if(index != 0){
+      l->head = l->head->next;
+    }
+    else{
+      int temp = l->head->value;
+      l->head = current;
+      return temp;
+    }
+    index -= 1;
+  }
+  l->head =current;
+  return -1;
+}
+
+int list_get_index_of(list_t *l, elem value){
+  node_t *current = l -> head;
+  int count = 0;
+
+  while(l->head != NULL){
+    if(l->head->value != value){
+      l->head = l ->head->next;
+      count += 1;
+    }
+    else{
+      l->head = current;
+      return count;
+    }
+  }
+  l->head = current;
+  return -1;
+}
